@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --background: #FDF6EC;
+  --foreground: #2C1810;
+  --accent: #8B5E3C;
+  --surface: #F5EDE0;
+}
+
+.dark {
+  --background: #1C1208;
+  --foreground: #E8D5B8;
+  --accent: #D4A96A;
+  --surface: #2A1F10;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.verse-text {
+  font-family: "Lora", Georgia, serif;
+}
+
+.verse-card {
+  @apply bg-white dark:bg-dark-surface rounded-2xl shadow-lg border border-accent/10 p-8;
+  @apply flex items-center justify-center min-h-[200px];
+}
+
+.btn-primary {
+  @apply bg-accent hover:bg-accent/90 text-white font-medium py-2.5 px-6 rounded-xl transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply bg-transparent border-2 border-accent text-accent hover:bg-accent/10 font-medium py-2.5 px-6 rounded-xl transition-all duration-200;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 rounded-xl border border-accent/20 bg-white dark:bg-dark-surface focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all;
+}
+
+/* Word highlight styles for drill modes */
+.word-correct {
+  @apply text-green-700 dark:text-green-400;
+}
+
+.word-incorrect {
+  @apply text-red-600 dark:text-red-400 line-through;
+}
+
+.word-missing {
+  @apply text-red-600 dark:text-red-400 underline;
+}
+
+.word-blank {
+  @apply inline-block border-b-2 border-accent/40 min-w-[3rem] mx-0.5;
+}

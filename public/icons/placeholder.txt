@@ -1,0 +1,5 @@
+Replace this file with actual app icons:
+- icon-192.png (192x192)
+- icon-512.png (512x512)
+
+Use a warm brown/parchment design with a book or cross motif.
