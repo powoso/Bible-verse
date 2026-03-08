@@ -33,13 +33,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const supabase = createClient();
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data);
+  const fetchProfile = async (userId: string, email?: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (data) {
+        setProfile(data);
+        return;
+      }
+
+      // Profile doesn't exist yet - create it (handles users created before trigger was set up)
+      if (error && email) {
+        const displayName = email.split("@")[0];
+        const { data: newProfile } = await supabase
+          .from("users")
+          .insert({ id: userId, email, display_name: displayName })
+          .select()
+          .single();
+
+        if (newProfile) {
+          setProfile(newProfile);
+          // Also create default collection
+          await supabase
+            .from("verse_collections")
+            .insert({ user_id: userId, name: "My Verses", description: "Default collection" });
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    }
   };
 
   const refreshProfile = async () => {
@@ -56,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.user.id, session.user.email);
       }
       setLoading(false);
     };
@@ -69,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.user.id, session.user.email);
       } else {
         setProfile(null);
       }

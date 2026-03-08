@@ -61,8 +61,10 @@ export default function DashboardPage() {
         });
       }
 
-      // Update streak
-      await supabase.rpc("update_streak", { p_user_id: profile?.id });
+      // Update streak (non-blocking)
+      if (profile?.id) {
+        supabase.rpc("update_streak", { p_user_id: profile.id }).catch(() => {});
+      }
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
     } finally {
