@@ -1,11 +1,13 @@
+// HelloAO Bible API translation IDs (bible.helloao.org)
+// No API key needed, no usage limits, free for commercial use
 export const TRANSLATIONS = [
-  { id: "de4e12af7f28f599-02", name: "KJV", label: "King James Version" },
-  { id: "06125adad2d5898a-01", name: "ASV", label: "American Standard Version" },
-  { id: "9879dbb7cfe39e4d-04", name: "WEB", label: "World English Bible" },
+  { id: "KJV", name: "KJV", label: "King James Version" },
+  { id: "ASV", name: "ASV", label: "American Standard Version" },
+  { id: "WEB", name: "WEB", label: "World English Bible" },
+  { id: "BSB", name: "BSB", label: "Berean Standard Bible" },
 ] as const;
 
-// For api.bible, ESV/NIV/NASB/NLT require commercial licenses.
-// We include free translations and allow user to add custom text.
+// These translations can be added manually by users (paste verse text)
 export const CUSTOM_TRANSLATIONS = ["ESV", "NIV", "NASB", "NLT"] as const;
 
 export const DRILL_MODES = [
