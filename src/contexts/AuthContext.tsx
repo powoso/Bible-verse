@@ -87,7 +87,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     };
 
-    getSession();
+    getSession().catch(() => setLoading(false));
+
+    // Safety: never hang loading for more than 5 seconds
+    const timeout = setTimeout(() => setLoading(false), 5000);
 
     const {
       data: { subscription },
@@ -102,7 +105,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

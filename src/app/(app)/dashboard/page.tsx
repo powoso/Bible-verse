@@ -23,9 +23,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (authLoading) return;
+    if (!profile) {
+      // No profile yet — still show dashboard with empty state
+      setLoading(false);
+      return;
+    }
     fetchDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading]);
+  }, [authLoading, profile]);
 
   const fetchDashboardData = async () => {
     try {
