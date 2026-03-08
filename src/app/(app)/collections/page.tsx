@@ -10,7 +10,7 @@ import { FREE_COLLECTION_LIMIT } from "@/lib/constants";
 type Collection = Database["public"]["Tables"]["verse_collections"]["Row"];
 
 export default function CollectionsPage() {
-  const { profile } = useAuth();
+  const { profile, loading: authLoading } = useAuth();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [showNewForm, setShowNewForm] = useState(false);
   const [newName, setNewName] = useState("");
@@ -22,32 +22,37 @@ export default function CollectionsPage() {
   const tier = profile?.subscription_tier || "free";
 
   useEffect(() => {
+    if (authLoading) return;
     fetchCollections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authLoading]);
 
   const fetchCollections = async () => {
-    const { data } = await supabase
-      .from("verse_collections")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const { data } = await supabase
+        .from("verse_collections")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    setCollections(data || []);
+      setCollections(data || []);
 
-    // Get verse counts per collection
-    if (data) {
-      const counts: Record<string, number> = {};
-      for (const col of data as Collection[]) {
-        const { count } = await supabase
-          .from("verses")
-          .select("*", { count: "exact", head: true })
-          .eq("collection_id", col.id);
-        counts[col.id] = count || 0;
+      // Get verse counts per collection
+      if (data) {
+        const counts: Record<string, number> = {};
+        for (const col of data as Collection[]) {
+          const { count } = await supabase
+            .from("verses")
+            .select("*", { count: "exact", head: true })
+            .eq("collection_id", col.id);
+          counts[col.id] = count || 0;
+        }
+        setVerseCounts(counts);
       }
-      setVerseCounts(counts);
+    } catch (err) {
+      console.error("Error fetching collections:", err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const createCollection = async (e: React.FormEvent) => {
@@ -77,7 +82,7 @@ export default function CollectionsPage() {
     fetchCollections();
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-pulse text-accent font-serif text-lg">Loading...</div>

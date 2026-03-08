@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
@@ -33,7 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const supabase = createClient();
-  const router = useRouter();
 
   const fetchProfile = async (userId: string, email?: string) => {
     try {
@@ -115,11 +113,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Sign out error:", err);
+    }
     setUser(null);
     setProfile(null);
     setSession(null);
-    router.push("/login");
+    // Hard redirect to fully clear client state
+    window.location.href = "/login";
   };
 
   return (
