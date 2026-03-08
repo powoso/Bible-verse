@@ -63,7 +63,7 @@ export default function DashboardPage() {
 
       // Update streak (non-blocking)
       if (profile?.id) {
-        supabase.rpc("update_streak", { p_user_id: profile.id }).catch(() => {});
+        void supabase.rpc("update_streak", { p_user_id: profile.id });
       }
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
